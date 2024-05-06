@@ -6,6 +6,6 @@ class RoutineRunnerConfig(AppConfig):
     name = 'routine_runner'
 
     def ready(self) -> None:
-        from routine_runner.signals import crontab_connector_signal
+        from routine_runner.signals import scheduler_connector_signal
         from routine_runner.models import CronJobModel
-        post_save.connect(crontab_connector_signal, sender=CronJobModel)
+        post_save.connect(scheduler_connector_signal, sender=CronJobModel)

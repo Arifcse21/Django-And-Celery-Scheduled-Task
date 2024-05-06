@@ -14,7 +14,7 @@ async def fetch_joke():
 
 
 @app.task(bind=True, ignore_result=True)
-def save_joke_task(self, crontab_pk):
+def save_joke_crontab_task(self, crontab_pk):
     crontab = CrontabSchedule.objects.get(pk=crontab_pk)
     cronjob_q = CronJobModel.objects.filter(cronsched=crontab)
     if cronjob_q.exists():
@@ -24,3 +24,14 @@ def save_joke_task(self, crontab_pk):
         cronjob.save()
     
 
+@app.task(bind=True, ignore_result=True)
+def save_joke_clocked_task(self, clocked_pk):
+    clocked = ClockedSchedule.objects.get(pk=clocked_pk)
+    cronjob_q = CronJobModel.objects.filter(clockedsched=clocked)
+    if cronjob_q.exists():
+        cronjob = cronjob_q.first()
+        cronjob.is_executed = True
+        cronjob.resp_msg = asyncio.run(fetch_joke())
+        cronjob.save()
+
+        
