@@ -27,8 +27,8 @@ def scheduler_connector_signal(sender, instance, created, **kwargs):
             PeriodicTask.objects.create(
                 crontab=crontab,
                 name=instance.title,
-                task="routine_runner.tasks.save_joke_crontab_task",
-                args=json.dumps([crontab.pk]),
+                task=f"{instance.task}",
+                args=json.dumps([instance.pk]),
             )
         elif instance.scheduled_datetime:
             print(f"scheduled_datetime: {instance.scheduled_datetime}")
@@ -42,8 +42,8 @@ def scheduler_connector_signal(sender, instance, created, **kwargs):
                 clocked=clocked,
                 name=instance.title,
                 one_off=True,
-                task="routine_runner.tasks.save_joke_clocked_task",
-                args=json.dumps([clocked.pk]),
+                task=f"{instance.task}",
+                args=json.dumps([instance.pk]),
             )
 
     

@@ -5,5 +5,5 @@ from routine_runner.models import *
 @admin.register(CronJobModel)
 class CronJobModelAdmin(admin.ModelAdmin):
     list_display = [
-        "pk", "title", "cron_expression", "is_executed", "created_at", "updated_at"
+        "pk", "title", "cron_expression", "created_at", "updated_at"
     ]

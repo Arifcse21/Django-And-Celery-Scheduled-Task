@@ -15,11 +15,12 @@ class CronJobModel(models.Model):
     scheduled_datetime = models.DateTimeField(null=True, blank=True)
     clockedsched = models.ForeignKey(ClockedSchedule, on_delete=models.CASCADE,
                                      related_name="clockedsched_clocked", null=True, blank=True)
-    is_executed = models.BooleanField(default=False)
+    task = models.CharField(max_length=255, null=True, blank=True)
+    clockedsched_executed = models.BooleanField(default=False)
     resp_msg = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{str(self.pk)}-{self.title}"
+        return f"{str(self.pk)}-{self.title}-{self.task}"
     
