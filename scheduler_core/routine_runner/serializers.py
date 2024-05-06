@@ -7,6 +7,6 @@ class CronJobSerializer(serializers.ModelSerializer):
         model = CronJobModel
         fields = '__all__'
         read_only_fields = [
-            "cronsched", "is_executed", "resp_msg", 
-            "created_at", "updated_at"
+            "cronsched", "clockedsched", "is_executed", 
+            "resp_msg", "created_at", "updated_at"
         ]
