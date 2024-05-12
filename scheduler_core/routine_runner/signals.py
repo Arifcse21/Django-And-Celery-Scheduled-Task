@@ -38,12 +38,17 @@ def scheduler_connector_signal(sender, instance, created, **kwargs):
             instance.clockedsched = clocked
             instance.save()
 
-            PeriodicTask.objects.create(
+            pt = PeriodicTask.objects.create(
                 clocked=clocked,
-                name=instance.title,
                 one_off=True,
                 task=f"{instance.task}",
                 args=json.dumps([instance.pk]),
             )
 
+            try: 
+                pt.name=instance.title
+                pt.save()
+            except:
+                pt.name=instance.title + str(instance.pk)
+                pt.save()
     

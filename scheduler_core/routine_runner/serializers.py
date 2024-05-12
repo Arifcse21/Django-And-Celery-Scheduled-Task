@@ -4,10 +4,8 @@ from scheduler_core.celery import app
 
 
 my_tasks = (
-    ("routine_runner.tasks.save_joke_crontab_task", "Execute crontab task"),
-    ("routine_runner.tasks.save_joke_clocked_task", "Execute clocked task"),
-    ("routine_runner.tasks.open_browser_url_task", "Open browser url"),
     ("routine_runner.tasks.notify_desktop_task", "Desktop notify"),
+    ("routine_runner.tasks.save_joke_task", "Save new joke"),
 )
 
 
