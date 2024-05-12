@@ -17,13 +17,33 @@ async def fetch_joke():
 
 
 @app.task(bind=True, ignore_result=True)
-def save_joke_crontab_task(self, crontab_pk):
-    crontab = CrontabSchedule.objects.get(pk=crontab_pk)
-    cronjob_q = CronJobModel.objects.filter(cronsched=crontab)
-    if cronjob_q.exists():
-        cronjob = cronjob_q.first()
-        cronjob.resp_msg = asyncio.run(fetch_joke())
-        cronjob.save()
+def save_joke_task(self, instance_pk):
+    crontab_pk = None
+    clocked_pk = None
+
+    model_query = CronJobModel.objects.filter(pk=instance_pk)
+    if model_query.exists():
+        model = model_query.first()
+        crontab_pk = model.cronsched.pk if model.cronsched else None
+        clocked_pk = model.clockedsched.pk if model.clockedsched else None
+
+    query = None
+    print("crontab_pk: ", crontab_pk)
+    print("clocked_pk: ", clocked_pk)
+    if crontab_pk:
+        print("crontab_pk: ", crontab_pk)
+        crontab = CrontabSchedule.objects.get(pk=crontab_pk)
+        query = CronJobModel.objects.filter(cronsched=crontab)
+
+    elif clocked_pk:
+        print("clocked_pk: ", clocked_pk)
+        clocked = ClockedSchedule.objects.get(pk=clocked_pk)
+        query = CronJobModel.objects.filter(clockedsched=clocked)
+
+    if query.exists():
+        query = query.first()
+        query.resp_msg = asyncio.run(fetch_joke())
+        query.save()
     
 
 @app.task(bind=True, ignore_result=True)
