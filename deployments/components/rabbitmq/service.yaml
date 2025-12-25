@@ -1,0 +1,18 @@
+apiVerion: v1
+kind: Service
+metadata:
+  name: rabbitmq-Service
+  namespace: schedule-queue-system
+  labels:
+    app: rabbitmq
+spec:
+  type: clusterIP
+  selector:
+    app: rabbitmq
+  ports:
+    - name: amqp
+      port: 5672
+      targetPort: 5672
+    - name: management
+      port: 15672
+      targetPort: 15672

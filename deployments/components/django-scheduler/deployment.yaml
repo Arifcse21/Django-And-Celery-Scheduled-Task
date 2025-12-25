@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-scheduler
+  namespace: schedule-queue-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: django-scheduler
+  template:
+    metadata:
+      labels:
+        app: django-scheduler
+    spec:
+      serviceAccountName: sqs-sa
+      containers:
+      - name: django-app
+        image: localhost/django-scheduler:latest
+        imagePullPolicy: Never
+        env:
+        - name: DJANGO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: shared-secrets
+              key: DJANGO_SECRET_KEY
+        - name: RABBITMQ_HOST
+          value: "rabbitmq-service.schedule-queue-system.svc.cluster.local"
+        - name: RABBITMQ_PORT
+          value: "5672"
+        - name: RABBITMQ_USER
+          valueFrom:
+            secretKeyRef:
+              name: shared-secrets
+              key: RABBITMQ_DEFAULT_USER
+        - name: RABBITMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: shared-secrets
+              key: RABBITMQ_DEFAULT_PASS
+        ports:
+        - containerPort: 8000
+        livenessProbe:
+          httpGet:
+            path: /health/
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready/
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5

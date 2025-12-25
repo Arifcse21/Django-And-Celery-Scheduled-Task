@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rabbitmq
+  namespace: schedule-queue-system
+spec:
+  template:
+    spec:
+      containers:
+      - name: rabbitmq
+        env:
+        - name: RABBITMQ_LOG_LEVEL
+          value: "debug"

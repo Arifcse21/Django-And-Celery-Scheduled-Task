@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rabbitmq
+  namespace: schedule-queue-system
+spec:
+  serviceName: rabbitmq-headless
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      serviceAccountName: sqs-sa
+      containers:
+      - name: rabbitmq
+        image: rabbitmq:3.9-management-alpine
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+          valueFrom:
+            secretKeyRef:
+              name: shared-secrets
+              key: rabbitmq-username
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              name: shared-secrets
+              key: rabbitmq-password
+        - name: RABBITMQ_ERLANG_COOKIE
+          value: "SWQOKODSQALRPCLNMEQG"
+        ports:
+        - containerPort: 5672
+          name: amqp
+        - containerPort: 15672
+          name: management
+        volumeMounts:
+        - name: rabbitmq-storage
+          mountPath: /var/lib/rabbitmq
+        livenessProbe:
+          exec:
+            command: ['sh', '-c', 'rabbitmq-diagnostics check_running && rabbitmq-diagnostics check_local_alarms']
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          exec:
+            command: ['sh', '-c', 'rabbitmq-diagnostics check_running']
+          initialDelaySeconds: 10
+          periodSeconds: 10
+      volumes:
+      - name: rabbitmq-storage
+        persistentVolumeClaim:
+          claimName: rabbitmq-data
