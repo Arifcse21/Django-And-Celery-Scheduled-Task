@@ -28,16 +28,16 @@ spec:
           value: "rabbitmq-service.schedule-queue-system.svc.cluster.local"
         - name: RABBITMQ_PORT
           value: "5672"
-        - name: RABBITMQ_DEFAULT_USER
+        - name: RABBITMQ_USER
           valueFrom:
             secretKeyRef:
               name: shared-secrets
-              key: RABBITMQ_DEFAULT_USER
-        - name: RABBITMQ_DEFAULT_PASS
+              key: RABBITMQ_USER
+        - name: RABBITMQ_PASSWORD
           valueFrom:
             secretKeyRef:
               name: shared-secrets
-              key: RABBITMQ_DEFAULT_PASS
+              key: RABBITMQ_PASSWORD
         ports:
         - containerPort: 8000
         livenessProbe:

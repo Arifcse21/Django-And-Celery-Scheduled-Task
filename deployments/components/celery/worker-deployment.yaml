@@ -33,9 +33,9 @@ spec:
           valueFrom:
             secretKeyRef:
               name: shared-secrets
-              key: RABBITMQ_DEFAULT_USER
+              key: RABBITMQ_USER
         - name: RABBITMQ_PASSWORD
           valueFrom:
             secretKeyRef:
               name: shared-secrets
-              key: RABBITMQ_DEFAULT_PASS
+              key: RABBITMQ_PASSWORD

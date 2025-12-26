@@ -111,8 +111,8 @@ CELERY_TIMEZONE = "UTC"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
-rabbitmq_user = os.environ.get("RABBITMQ_DEFAULT_USER")
-rabbitmq_pass = os.environ.get("RABBITMQ_DEFAULT_PASS")
+rabbitmq_user = os.environ.get("RABBITMQ_USER")
+rabbitmq_pass = os.environ.get("RABBITMQ_PASSWORD")
 rabbitmq_host = os.environ.get("RABBITMQ_HOST")
 rabbitmq_port = os.environ.get("RABBITMQ_PORT")
 
