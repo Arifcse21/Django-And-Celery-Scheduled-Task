@@ -5,6 +5,7 @@ resources:
 - ../../base
 - ../../components/rabbitmq
 - ../../components/django-scheduler
+- ../../components/celery
 
 patches:
 - path: rabbitmq-config.yaml

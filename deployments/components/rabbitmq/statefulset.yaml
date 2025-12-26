@@ -15,6 +15,13 @@ spec:
         app: rabbitmq
     spec:
       serviceAccountName: sqs-sa
+      initContainers:
+      - name: setup-cookie
+        image: busybox:1.35
+        command: ['sh', '-c', 'echo -n "SWQOKODSQALRPCLNMEQG" > /var/lib/rabbitmq/.erlang.cookie && chmod 600 /var/lib/rabbitmq/.erlang.cookie && chown 999:999 /var/lib/rabbitmq/.erlang.cookie']
+        volumeMounts:
+        - name: rabbitmq-storage
+          mountPath: /var/lib/rabbitmq
       containers:
       - name: rabbitmq
         image: rabbitmq:3.9-management-alpine
@@ -23,14 +30,12 @@ spec:
           valueFrom:
             secretKeyRef:
               name: shared-secrets
-              key: rabbitmq-username
+              key: RABBITMQ_DEFAULT_USER
         - name: RABBITMQ_DEFAULT_PASS
           valueFrom:
             secretKeyRef:
               name: shared-secrets
-              key: rabbitmq-password
-        - name: RABBITMQ_ERLANG_COOKIE
-          value: "SWQOKODSQALRPCLNMEQG"
+              key: RABBITMQ_DEFAULT_PASS
         ports:
         - containerPort: 5672
           name: amqp
@@ -42,14 +47,22 @@ spec:
         livenessProbe:
           exec:
             command: ['sh', '-c', 'rabbitmq-diagnostics check_running && rabbitmq-diagnostics check_local_alarms']
-          initialDelaySeconds: 30
+          initialDelaySeconds: 60  # Increased to give more startup time
           periodSeconds: 30
+          timeoutSeconds: 10      # Increased timeout
+          failureThreshold: 5     # Increased to be more forgiving
         readinessProbe:
           exec:
             command: ['sh', '-c', 'rabbitmq-diagnostics check_running']
-          initialDelaySeconds: 10
+          initialDelaySeconds: 30 # Increased to give more startup time
           periodSeconds: 10
-      volumes:
-      - name: rabbitmq-storage
-        persistentVolumeClaim:
-          claimName: rabbitmq-data
+          timeoutSeconds: 10      # Increased timeout
+          failureThreshold: 5     # Increased to be more forgiving
+  volumeClaimTemplates:
+  - metadata:
+      name: rabbitmq-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 8Gi

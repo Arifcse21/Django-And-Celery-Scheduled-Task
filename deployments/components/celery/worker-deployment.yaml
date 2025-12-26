@@ -1,23 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: django-scheduler
+  name: celery-worker
   namespace: schedule-queue-system
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: django-scheduler
+      app: celery-worker
   template:
     metadata:
       labels:
-        app: django-scheduler
+        app: celery-worker
     spec:
       serviceAccountName: sqs-sa
       containers:
-      - name: django-app
+      - name: celery-worker
         image: localhost/django-scheduler:latest
         imagePullPolicy: Never
+        command: ["celery", "-A", "scheduler_core", "worker", "-l", "info"]
         env:
         - name: DJANGO_SECRET_KEY
           valueFrom:
@@ -28,27 +29,13 @@ spec:
           value: "rabbitmq-service.schedule-queue-system.svc.cluster.local"
         - name: RABBITMQ_PORT
           value: "5672"
-        - name: RABBITMQ_DEFAULT_USER
+        - name: RABBITMQ_USER
           valueFrom:
             secretKeyRef:
               name: shared-secrets
               key: RABBITMQ_DEFAULT_USER
-        - name: RABBITMQ_DEFAULT_PASS
+        - name: RABBITMQ_PASSWORD
           valueFrom:
             secretKeyRef:
               name: shared-secrets
               key: RABBITMQ_DEFAULT_PASS
-        ports:
-        - containerPort: 8000
-        livenessProbe:
-          httpGet:
-            path: /health/
-            port: 8000
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /ready/
-            port: 8000
-          initialDelaySeconds: 5
-          periodSeconds: 5
