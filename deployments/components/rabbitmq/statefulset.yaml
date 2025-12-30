@@ -26,12 +26,12 @@ spec:
       - name: rabbitmq
         image: rabbitmq:3.9-management-alpine
         env:
-        - name: RABBITMQ_USER
+        - name: rabbitmq-user
           valueFrom:
             secretKeyRef:
               name: shared-secrets
               key: RABBITMQ_USER
-        - name: RABBITMQ_PASSWORD
+        - name: rabbitmq-password
           valueFrom:
             secretKeyRef:
               name: shared-secrets

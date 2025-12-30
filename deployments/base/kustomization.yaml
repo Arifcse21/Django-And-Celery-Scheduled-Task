@@ -6,7 +6,8 @@ resources:
 - rbac/service-account.yaml
 - rbac/role.yaml
 - rbac/role-binding.yaml
-- secrets/secrets.yaml
+- secrets/shared-secrets.yaml
+- secrets/rabbitmq-default-user-secret.yaml
 
 labels:
 - pairs:

@@ -8,7 +8,7 @@ resources:
 - ../../components/celery
 
 patches:
-- path: rabbitmq-config.yaml
+# - path: rabbitmq-config.yaml
 - path: django-config.yaml
 
 configMapGenerator:

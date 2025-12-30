@@ -25,19 +25,19 @@ spec:
               name: shared-secrets
               key: DJANGO_SECRET_KEY
         - name: RABBITMQ_HOST
-          value: "rabbitmq-service.schedule-queue-system.svc.cluster.local"
+          value: "rabbitmq.schedule-queue-system.svc.cluster.local"  # Or check with kubectl get svc
         - name: RABBITMQ_PORT
           value: "5672"
         - name: RABBITMQ_USER
           valueFrom:
             secretKeyRef:
               name: shared-secrets
-              key: RABBITMQ_USER
+              key: rabbitmq-user
         - name: RABBITMQ_PASSWORD
           valueFrom:
             secretKeyRef:
               name: shared-secrets
-              key: RABBITMQ_PASSWORD
+              key: rabbitmq-password
         ports:
         - containerPort: 8000
         livenessProbe:
